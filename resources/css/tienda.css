@@ -1,0 +1,17 @@
+/* ==========================================================================
+   Tienda MVP - Archivo de referencia
+   Los estilos personalizados se encuentran en app.css dentro de @layer components.
+   Este archivo se mantiene como documentación de las clases CSS del proyecto.
+   ========================================================================== */
+
+/*
+  Clases disponibles:
+
+  Alertas:     .alert, .alert-success, .alert-error, .alert-warning
+  Cards:       .metric-card, .metric-card__title, .metric-card__value, .metric-card__icon
+  Tablas:      .table-container, .table-header, .table-header__title
+  Formularios: .form-group, .form-label, .form-input, .form-error
+  Botones:     .btn, .btn-primary, .btn-secondary, .btn-danger, .btn-success, .btn-sm
+  Badges:      .badge, .badge-danger, .badge-warning, .badge-success
+*/
+
