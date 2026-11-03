@@ -5,21 +5,23 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreSaleRequest;
 use App\Models\Product;
 use App\Models\Sale;
-use App\Models\SaleItem;
-use Carbon\Carbon;
+use App\Services\SaleService;
 use DomainException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Throwable;
 
 class SaleController extends Controller
 {
-    /* ────────────────────────────────────────
-     |  Historial de ventas
-     |──────────────────────────────────────── */
+    public function __construct(
+        protected SaleService $saleService
+    ) {}
+
+    /**
+     * Historial paginado de ventas.
+     */
     public function index(): View
     {
         $sales = Sale::with('items.product')
@@ -29,9 +31,9 @@ class SaleController extends Controller
         return view('sales.index', compact('sales'));
     }
 
-    /* ────────────────────────────────────────
-     |  Formulario clásico de venta (legacy)
-     |──────────────────────────────────────── */
+    /**
+     * Formulario clásico de venta (legacy).
+     */
     public function create(): View
     {
         $products = Product::where('stock', '>', 0)
@@ -41,9 +43,9 @@ class SaleController extends Controller
         return view('sales.create', compact('products'));
     }
 
-    /* ────────────────────────────────────────
-     |  MODO CAJA — POS completo
-     |──────────────────────────────────────── */
+    /**
+     * Modo Caja — POS completo.
+     */
     public function pos(): View
     {
         $frequentProducts = Product::frequent()
@@ -57,61 +59,25 @@ class SaleController extends Controller
         return view('sales.pos', compact('frequentProducts', 'allProducts'));
     }
 
-    /* ────────────────────────────────────────
-     |  API: Buscar productos (para POS)
-     |──────────────────────────────────────── */
+    /**
+     * API: Buscar productos en tiempo real para el POS.
+     */
     public function searchProducts(Request $request): JsonResponse
     {
-        $query = $request->input('q', '');
-
-        $products = Product::where('stock', '>', 0)
-            ->where(function ($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                    ->orWhere('barcode', 'like', "%{$query}%");
-            })
-            ->orderBy('name')
-            ->take(20)
-            ->get(['id', 'name', 'sale_price', 'stock', 'barcode', 'is_frequent']);
+        $products = $this->saleService->searchProducts(
+            $request->input('q', '')
+        );
 
         return response()->json($products);
     }
 
-    /* ────────────────────────────────────────
-     |  Guardar venta (formulario clásico)
-     |──────────────────────────────────────── */
+    /**
+     * Guardar venta desde formulario clásico.
+     */
     public function store(StoreSaleRequest $request): RedirectResponse
     {
         try {
-            DB::transaction(function () use ($request) {
-                $sale = Sale::create(['total' => 0]);
-                $total = 0;
-
-                foreach ($request->validated()['products'] as $item) {
-                    // Bloqueo pesimista para evitar sobreventas por concurrencia
-                    $product = Product::where('id', $item['id'])
-                        ->lockForUpdate()
-                        ->firstOrFail();
-
-                    if ($product->stock < $item['quantity']) {
-                        throw new DomainException("Stock insuficiente para {$product->name}. Stock disponible: {$product->stock}.");
-                    }
-
-                    $subtotal = $product->sale_price * $item['quantity'];
-
-                    $sale->items()->create([
-                        'product_id' => $product->id,
-                        'quantity' => $item['quantity'],
-                        'price' => $product->sale_price,
-                        'cost_price' => $product->purchase_price,
-                    ]);
-
-                    $product->decrement('stock', $item['quantity']);
-
-                    $total += $subtotal;
-                }
-
-                $sale->update(['total' => $total]);
-            });
+            $this->saleService->createSale($request->validated()['products']);
         } catch (DomainException $e) {
             return back()->withInput()->withErrors(['stock' => $e->getMessage()]);
         }
@@ -121,9 +87,9 @@ class SaleController extends Controller
             ->with('success', 'Venta registrada exitosamente.');
     }
 
-    /* ────────────────────────────────────────
-     |  API: Guardar venta rápida (POS)
-     |──────────────────────────────────────── */
+    /**
+     * API: Guardar venta rápida desde Modo Caja (POS).
+     */
     public function storeQuick(Request $request): JsonResponse
     {
         $request->validate([
@@ -133,37 +99,7 @@ class SaleController extends Controller
         ]);
 
         try {
-            $sale = DB::transaction(function () use ($request) {
-                $sale = Sale::create(['total' => 0]);
-                $total = 0;
-
-                foreach ($request->input('items') as $item) {
-                    // Bloqueo pesimista para atomicidad en la validación y decremento de stock
-                    $product = Product::where('id', $item['product_id'])
-                        ->lockForUpdate()
-                        ->firstOrFail();
-
-                    if ($product->stock < $item['quantity']) {
-                        throw new DomainException("Stock insuficiente para {$product->name}. Stock actual: {$product->stock}.");
-                    }
-
-                    $subtotal = $product->sale_price * $item['quantity'];
-
-                    $sale->items()->create([
-                        'product_id' => $product->id,
-                        'quantity' => $item['quantity'],
-                        'price' => $product->sale_price,
-                        'cost_price' => $product->purchase_price,
-                    ]);
-
-                    $product->decrement('stock', $item['quantity']);
-                    $total += $subtotal;
-                }
-
-                $sale->update(['total' => $total]);
-
-                return $sale;
-            });
+            $sale = $this->saleService->createQuickSale($request->input('items'));
 
             return response()->json([
                 'success' => true,
@@ -184,35 +120,13 @@ class SaleController extends Controller
         }
     }
 
-    /* ────────────────────────────────────────
-     |  Historial del día (resumen)
-     |──────────────────────────────────────── */
+    /**
+     * Historial y resumen del día actual.
+     */
     public function today(): View
     {
-        $today = Carbon::today();
+        $summary = $this->saleService->getTodaySummary(request()->user());
 
-        $sales = Sale::with('items.product')
-            ->whereDate('created_at', $today)
-            ->orderByDesc('created_at')
-            ->get();
-
-        $totalToday = $sales->sum('total');
-        $salesCountToday = $sales->count();
-        $productsSoldToday = $sales->flatMap->items->sum('quantity');
-
-        // Ganancia visible según permisos calculada con costo histórico inmutable
-        $profitToday = request()->user()?->isAdmin()
-            ? (SaleItem::whereHas('sale', fn ($q) => $q->whereDate('created_at', $today))
-                ->selectRaw('SUM(quantity * (price - cost_price)) as profit')
-                ->value('profit') ?? 0)
-            : 0;
-
-        return view('sales.today', compact(
-            'sales',
-            'totalToday',
-            'salesCountToday',
-            'productsSoldToday',
-            'profitToday'
-        ));
+        return view('sales.today', $summary);
     }
 }
