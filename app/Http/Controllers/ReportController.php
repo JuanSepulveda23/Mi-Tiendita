@@ -32,10 +32,9 @@ class ReportController extends Controller
             $salesTotal = Sale::whereDate('created_at', $date)->sum('total');
 
             $costAndRevenue = SaleItem::whereHas('sale', fn ($q) => $q->whereDate('created_at', $date))
-                ->join('products', 'sale_items.product_id', '=', 'products.id')
                 ->selectRaw('
-                    COALESCE(SUM(sale_items.quantity * sale_items.price), 0) as revenue,
-                    COALESCE(SUM(sale_items.quantity * products.purchase_price), 0) as cost
+                    COALESCE(SUM(quantity * price), 0) as revenue,
+                    COALESCE(SUM(quantity * cost_price), 0) as cost
                 ')
                 ->first();
 
@@ -74,8 +73,8 @@ class ReportController extends Controller
                 products.sale_price,
                 SUM(sale_items.quantity) as total_qty,
                 SUM(sale_items.quantity * sale_items.price) as total_revenue,
-                SUM(sale_items.quantity * products.purchase_price) as total_cost,
-                SUM(sale_items.quantity * (sale_items.price - products.purchase_price)) as total_profit
+                SUM(sale_items.quantity * sale_items.cost_price) as total_cost,
+                SUM(sale_items.quantity * (sale_items.price - sale_items.cost_price)) as total_profit
             ')
             ->groupBy('products.id', 'products.name', 'products.purchase_price', 'products.sale_price')
             ->orderByDesc('total_profit')

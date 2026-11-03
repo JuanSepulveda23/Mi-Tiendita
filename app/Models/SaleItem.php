@@ -12,6 +12,13 @@ class SaleItem extends Model
         'product_id',
         'quantity',
         'price',
+        'cost_price',
+    ];
+
+    protected $casts = [
+        'quantity' => 'integer',
+        'price' => 'decimal:2',
+        'cost_price' => 'decimal:2',
     ];
 
     public function sale(): BelongsTo
@@ -22,5 +29,13 @@ class SaleItem extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    /**
+     * Ganancia total de esta línea de venta.
+     */
+    public function profit(): float
+    {
+        return (float) (($this->price - $this->cost_price) * $this->quantity);
     }
 }
