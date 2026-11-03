@@ -149,3 +149,4 @@ class ExpirationAlertService
         return $totalSold > 0 ? round($totalSold / 7, 2) : 0;
     }
 }
+
