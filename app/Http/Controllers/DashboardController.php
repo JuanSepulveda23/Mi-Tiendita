@@ -6,11 +6,16 @@ use App\Models\ExpirationAlert;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleItem;
+use App\Services\ExpirationAlertService;
 use Carbon\Carbon;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
+    public function __construct(
+        protected ExpirationAlertService $alertService
+    ) {}
+
     public function index(): View
     {
         $today = Carbon::today();
@@ -54,12 +59,7 @@ class DashboardController extends Controller
             ->get();
 
         // ── Alertas de vencimiento urgentes ──
-        $urgentExpirationAlerts = ExpirationAlert::with('product')
-            ->active()
-            ->urgent()
-            ->orderBy('days_remaining')
-            ->take(5)
-            ->get();
+        $urgentExpirationAlerts = $this->alertService->getActiveUrgentAlerts(5);
         $expirationWarningCount = ExpirationAlert::active()->willExpire()->count();
 
         return view('dashboard', compact(

@@ -3,29 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\ExpirationAlert;
+use App\Services\ExpirationAlertService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class AlertController extends Controller
 {
+    public function __construct(
+        protected ExpirationAlertService $alertService
+    ) {}
+
     /**
      * Ver todas las alertas de vencimiento.
      */
     public function expirations(): View
     {
-        $alerts = ExpirationAlert::with('product')
-            ->active()
-            ->orderByRaw("CASE risk_level WHEN 'urgent' THEN 1 WHEN 'high' THEN 2 ELSE 3 END")
-            ->orderBy('days_remaining')
-            ->paginate(20);
-
-        $stats = [
-            'total' => ExpirationAlert::active()->count(),
-            'urgent' => ExpirationAlert::active()->urgent()->count(),
-            'high' => ExpirationAlert::active()->highRisk()->count(),
-            'will_expire' => ExpirationAlert::active()->willExpire()->count(),
-        ];
+        $alerts = $this->alertService->getAlertsPaginated(20);
+        $stats = $this->alertService->getActiveAlertsStats();
 
         return view('alerts.expirations', compact('alerts', 'stats'));
     }
@@ -35,7 +30,7 @@ class AlertController extends Controller
      */
     public function dismiss(ExpirationAlert $alert): JsonResponse
     {
-        $alert->dismiss();
+        $this->alertService->dismissAlert($alert);
 
         return response()->json([
             'success' => true,
@@ -48,9 +43,7 @@ class AlertController extends Controller
      */
     public function dismissProduct(int $productId): RedirectResponse
     {
-        ExpirationAlert::where('product_id', $productId)
-            ->active()
-            ->each(fn ($alert) => $alert->dismiss());
+        $this->alertService->dismissProductAlerts($productId);
 
         return back()->with('success', 'Alertas descartadas');
     }
@@ -60,12 +53,7 @@ class AlertController extends Controller
      */
     public function activeAlertsApi(): JsonResponse
     {
-        $alerts = ExpirationAlert::with('product')
-            ->active()
-            ->urgent()
-            ->orderBy('days_remaining')
-            ->take(5)
-            ->get();
+        $alerts = $this->alertService->getActiveUrgentAlerts(5);
 
         return response()->json($alerts);
     }
