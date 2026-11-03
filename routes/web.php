@@ -14,9 +14,9 @@ Route::get('/', function () {
 });
 
 // Offline page (accessible without auth for PWA)
-Route::get('/offline', fn () => view('offline'))->name('offline');
+Route::get('/offline', fn() => view('offline'))->name('offline');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -61,4 +61,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

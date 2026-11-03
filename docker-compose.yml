@@ -1,0 +1,63 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mi_tiendita_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    networks:
+      - mi-tiendita-network
+    depends_on:
+      - mysql
+
+  web:
+    image: nginx:alpine
+    container_name: mi_tiendita_web
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - mi-tiendita-network
+    depends_on:
+      - app
+
+  mysql:
+    image: mysql:8.0
+    container_name: mi_tiendita_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+      MYSQL_USER: laravel
+    ports:
+      - "3306:3306"
+    networks:
+      - mi-tiendita-network
+    volumes:
+      - dbdata:/var/lib/mysql
+
+  node:
+    image: node:20-alpine
+    container_name: mi_tiendita_node
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    command: npm run dev -- --host
+    ports:
+      - "5173:5173"
+    networks:
+      - mi-tiendita-network
+
+networks:
+  mi-tiendita-network:
+    driver: bridge
+
+volumes:
+  dbdata:
