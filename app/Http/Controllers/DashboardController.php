@@ -20,11 +20,10 @@ class DashboardController extends Controller
         $salesCountToday = Sale::whereDate('created_at', $today)->count();
         $productsSoldToday = SaleItem::whereHas('sale', fn ($q) => $q->whereDate('created_at', $today))->sum('quantity');
 
-        // Ganancia estimada del día (venta - costo) - Exclusivo para Administradores
+        // Ganancia estimada del día (venta - costo histórico) - Exclusivo para Administradores
         $profitToday = request()->user()?->isAdmin()
             ? (SaleItem::whereHas('sale', fn ($q) => $q->whereDate('created_at', $today))
-                ->join('products', 'sale_items.product_id', '=', 'products.id')
-                ->selectRaw('SUM(sale_items.quantity * (sale_items.price - products.purchase_price)) as profit')
+                ->selectRaw('SUM(quantity * (price - cost_price)) as profit')
                 ->value('profit') ?? 0)
             : 0;
 

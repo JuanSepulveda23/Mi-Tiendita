@@ -97,4 +97,3 @@ class SecurityPhase1Test extends TestCase
         $this->assertEquals(2, $product->fresh()->stock);
     }
 }
-

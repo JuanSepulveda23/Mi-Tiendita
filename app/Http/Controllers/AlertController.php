@@ -16,7 +16,7 @@ class AlertController extends Controller
     {
         $alerts = ExpirationAlert::with('product')
             ->active()
-            ->orderByRaw("FIELD(risk_level, 'urgent', 'high', 'low')")
+            ->orderByRaw("CASE risk_level WHEN 'urgent' THEN 1 WHEN 'high' THEN 2 ELSE 3 END")
             ->orderBy('days_remaining')
             ->paginate(20);
 

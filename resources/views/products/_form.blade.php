@@ -156,6 +156,36 @@
             </div>
         </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="form-group">
+                <label for="entry_date" class="form-label">Fecha de ingreso / lote</label>
+                <input
+                    type="date"
+                    name="entry_date"
+                    id="entry_date"
+                    class="form-input"
+                    value="{{ old('entry_date', isset($product->entry_date) ? $product->entry_date->format('Y-m-d') : '') }}"
+                >
+                @error('entry_date')
+                    <p class="form-error">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="expiration_date" class="form-label">Fecha de vencimiento (alerta)</label>
+                <input
+                    type="date"
+                    name="expiration_date"
+                    id="expiration_date"
+                    class="form-input"
+                    value="{{ old('expiration_date', isset($product->expiration_date) ? $product->expiration_date->format('Y-m-d') : '') }}"
+                >
+                @error('expiration_date')
+                    <p class="form-error">{{ $message }}</p>
+                @enderror
+            </div>
+        </div>
+
         <div class="form-group">
             <label class="flex items-center gap-2 cursor-pointer">
                 <input

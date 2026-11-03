@@ -26,6 +26,8 @@ class UpdateProductRequest extends FormRequest
             'min_stock' => ['nullable', 'integer', 'min:0'],
             'category' => ['nullable', 'string', 'max:255'],
             'supplier' => ['nullable', 'string', 'max:255'],
+            'expiration_date' => ['nullable', 'date'],
+            'entry_date' => ['nullable', 'date'],
         ];
     }
 

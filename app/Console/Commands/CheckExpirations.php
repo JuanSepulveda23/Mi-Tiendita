@@ -90,14 +90,31 @@ class CheckExpirations extends Command
                     ]);
                 }
             } elseif ($daysRemaining < 0) {
-                // Producto vencido: crear alerta de urgencia máxima
-                ExpirationAlert::create([
-                    'product_id' => $product->id,
-                    'days_remaining' => $daysRemaining,
-                    'risk_level' => 'urgent',
-                    'stock_at_alert' => $product->stock,
-                    'will_expire' => true,
-                ]);
+                // Producto vencido: verificar si ya existe alerta activa para evitar duplicados
+                $existingAlert = ExpirationAlert::where('product_id', $product->id)
+                    ->active()
+                    ->first();
+
+                if (! $existingAlert) {
+                    ExpirationAlert::create([
+                        'product_id' => $product->id,
+                        'days_remaining' => $daysRemaining,
+                        'risk_level' => 'urgent',
+                        'stock_at_alert' => $product->stock,
+                        'avg_daily_sales' => $this->getAverageDailySales($product->id),
+                        'rotation_days' => 0,
+                        'will_expire' => true,
+                    ]);
+
+                    $alertsCreated++;
+                } else {
+                    $existingAlert->update([
+                        'days_remaining' => $daysRemaining,
+                        'risk_level' => 'urgent',
+                        'stock_at_alert' => $product->stock,
+                        'will_expire' => true,
+                    ]);
+                }
 
                 $this->error(sprintf(
                     '🛑 PRODUCTO VENCIDO: %s (vencido hace %d días)',
