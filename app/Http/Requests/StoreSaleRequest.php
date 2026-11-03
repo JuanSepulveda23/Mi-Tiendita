@@ -17,9 +17,9 @@ class StoreSaleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'products'              => ['required', 'array', 'min:1'],
-            'products.*.id'         => ['required', 'exists:products,id'],
-            'products.*.quantity'   => ['required', 'integer', 'min:1'],
+            'products' => ['required', 'array', 'min:1'],
+            'products.*.id' => ['required', 'exists:products,id'],
+            'products.*.quantity' => ['required', 'integer', 'min:1'],
         ];
     }
 
@@ -29,11 +29,11 @@ class StoreSaleRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'products.required'            => 'Debe agregar al menos un producto.',
-            'products.*.id.required'       => 'El producto es obligatorio.',
-            'products.*.id.exists'         => 'El producto seleccionado no existe.',
-            'products.*.quantity.required'  => 'La cantidad es obligatoria.',
-            'products.*.quantity.min'       => 'La cantidad mínima es 1.',
+            'products.required' => 'Debe agregar al menos un producto.',
+            'products.*.id.required' => 'El producto es obligatorio.',
+            'products.*.id.exists' => 'El producto seleccionado no existe.',
+            'products.*.quantity.required' => 'La cantidad es obligatoria.',
+            'products.*.quantity.min' => 'La cantidad mínima es 1.',
         ];
     }
 }

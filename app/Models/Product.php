@@ -74,8 +74,10 @@ class Product extends Model
      */
     public function daysUntilExpiration(): ?int
     {
-        if (!$this->expiration_date) return null;
-        
+        if (! $this->expiration_date) {
+            return null;
+        }
+
         return \Carbon\Carbon::today()->diffInDays($this->expiration_date, false);
     }
 
@@ -85,6 +87,7 @@ class Product extends Model
     public function isExpiringSoon(): bool
     {
         $days = $this->daysUntilExpiration();
+
         return $days !== null && $days <= 3;
     }
 
@@ -94,6 +97,7 @@ class Product extends Model
     public function isExpiringUrgent(): bool
     {
         $days = $this->daysUntilExpiration();
+
         return $days !== null && $days <= 1;
     }
 }

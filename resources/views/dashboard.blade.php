@@ -55,24 +55,26 @@
                         <p class="text-sm text-gray-500 mt-2">unidades vendidas hoy</p>
                     </div>
 
-                    {{-- Ganancia estimada --}}
-                    <div class="metric-card border-l-4 border-l-emerald-500">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="metric-card__title">Ganancia Estimada</p>
-                                <p class="metric-card__value text-emerald-600">
-                                    ${{ number_format($profitToday, 0, ',', '.') }}</p>
+                    {{-- Ganancia estimada (Solo visible para Administradores) --}}
+                    @if(Auth::user()->isAdmin())
+                        <div class="metric-card border-l-4 border-l-emerald-500">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="metric-card__title">Ganancia Estimada</p>
+                                    <p class="metric-card__value text-emerald-600">
+                                        ${{ number_format($profitToday, 0, ',', '.') }}</p>
+                                </div>
+                                <div class="metric-card__icon bg-emerald-100">
+                                    <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                    </svg>
+                                </div>
                             </div>
-                            <div class="metric-card__icon bg-emerald-100">
-                                <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                                </svg>
-                            </div>
+                            <p class="text-sm text-gray-500 mt-2">ganancia neta del día</p>
                         </div>
-                        <p class="text-sm text-gray-500 mt-2">ganancia neta del día</p>
-                    </div>
+                    @endif
 
                     {{-- Alerta bajo stock --}}
                     <div
