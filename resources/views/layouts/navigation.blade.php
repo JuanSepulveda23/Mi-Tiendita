@@ -31,14 +31,20 @@
             Productos
         </x-sidebar-link>
 
-        <x-sidebar-link :href="route('intelligence.predictions')" :active="request()->routeIs('intelligence.*')"
-            icon="magic">
-            Predicciones
-        </x-sidebar-link>
+        @if(Auth::user()->isAdmin())
+            <x-sidebar-link :href="route('intelligence.predictions')" :active="request()->routeIs('intelligence.*')"
+                icon="magic">
+                Predicciones
+            </x-sidebar-link>
 
-        <x-sidebar-link :href="route('reports.profits')" :active="request()->routeIs('reports.*')" icon="money">
-            Ganancias
-        </x-sidebar-link>
+            <x-sidebar-link :href="route('reports.profits')" :active="request()->routeIs('reports.*')" icon="money">
+                Ganancias
+            </x-sidebar-link>
+
+            <x-sidebar-link :href="route('register')" :active="request()->routeIs('register')" icon="user">
+                Crear Usuario
+            </x-sidebar-link>
+        @endif
     </nav>
 
     {{-- ── User Footer ── --}}
@@ -48,7 +54,12 @@
                 {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
             </div>
             <div class="sidebar__user-info">
-                <span class="sidebar__user-name">{{ Auth::user()->name }}</span>
+                <div class="flex items-center gap-1.5">
+                    <span class="sidebar__user-name">{{ Auth::user()->name }}</span>
+                    <span class="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded {{ Auth::user()->isAdmin() ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700' }}">
+                        {{ Auth::user()->isAdmin() ? 'Admin' : 'Cajero' }}
+                    </span>
+                </div>
                 <span class="sidebar__user-email">{{ Auth::user()->email }}</span>
             </div>
         </div>

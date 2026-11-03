@@ -69,11 +69,11 @@ class IntelligenceController extends Controller
 
         $products = Product::orderBy('name')->get();
 
-        $orders = $products->map(function ($product) use ($dailySales, $days, $bufferDays) {
+        $orders = $products->map(function ($product) use ($dailySales, $bufferDays) {
             // Obtener ventas de los últimos 7 días de este producto
             $sales = $dailySales->get($product->id, collect())->pluck('daily_qty')->toArray();
             $totalSold = array_sum($sales);
-            
+
             // Promedio diario real de los últimos 7 días
             $avgDaily = count($sales) > 0 ? round($totalSold / count($sales), 2) : 0;
             $maxDaily = count($sales) > 0 ? max($sales) : 0;
@@ -81,7 +81,7 @@ class IntelligenceController extends Controller
             // Stock objetivo: (promedio * buffer days) + máximo diario
             // Esto asegura que siempre tengas stock suficiente incluso en días altos
             $targetStock = ceil(($avgDaily * $bufferDays) + $maxDaily);
-            
+
             // Cantidad a comprar = target - stock actual
             $toOrder = max(0, $targetStock - $product->stock);
 
@@ -100,8 +100,8 @@ class IntelligenceController extends Controller
                 'rotation_days' => $rotationDays,
             ];
         })
-        ->filter(fn ($o) => $o->to_order > 0)
-        ->sortByDesc('to_order');
+            ->filter(fn ($o) => $o->to_order > 0)
+            ->sortByDesc('to_order');
 
         $totalCost = $orders->sum('estimated_cost');
         $totalToOrder = $orders->sum('to_order');
@@ -146,10 +146,19 @@ class IntelligenceController extends Controller
 
     private function riskLevel(?float $daysRemaining): string
     {
-        if ($daysRemaining === null) return 'none';
-        if ($daysRemaining <= 3) return 'critical';
-        if ($daysRemaining <= 7) return 'warning';
-        if ($daysRemaining <= 14) return 'low';
+        if ($daysRemaining === null) {
+            return 'none';
+        }
+        if ($daysRemaining <= 3) {
+            return 'critical';
+        }
+        if ($daysRemaining <= 7) {
+            return 'warning';
+        }
+        if ($daysRemaining <= 14) {
+            return 'low';
+        }
+
         return 'safe';
     }
 }

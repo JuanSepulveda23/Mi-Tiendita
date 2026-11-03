@@ -54,7 +54,7 @@ class CheckExpirations extends Command
                     ->active()
                     ->first();
 
-                if (!$existingAlert) {
+                if (! $existingAlert) {
                     ExpirationAlert::create([
                         'product_id' => $product->id,
                         'days_remaining' => $daysRemaining,

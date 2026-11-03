@@ -6,10 +6,12 @@
             </h2>
             <p class="text-emerald-100 text-sm mt-1">Administra tu inventario y precios.</p>
         </div>
-        <a href="{{ route('products.create') }}"
-            class="btn bg-white/20 text-white hover:bg-white/30 border border-emerald-400 shadow-sm backdrop-blur-sm transition-all px-4 py-2 font-medium">
-            + Nuevo Producto
-        </a>
+        @if(Auth::user()->isAdmin())
+            <a href="{{ route('products.create') }}"
+                class="btn bg-white/20 text-white hover:bg-white/30 border border-emerald-400 shadow-sm backdrop-blur-sm transition-all px-4 py-2 font-medium">
+                + Nuevo Producto
+            </a>
+        @endif
     </x-slot>
 
     <div class="py-8">
@@ -100,18 +102,22 @@
                                         </button>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-                                        <a href="{{ route('products.edit', $product) }}"
-                                            class="btn btn-secondary btn-sm mr-1">
-                                            Editar
-                                        </a>
-                                        <form action="{{ route('products.destroy', $product) }}" method="POST"
-                                            class="inline" onsubmit="return confirm('¿Eliminar este producto?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">
-                                                Eliminar
-                                            </button>
-                                        </form>
+                                        @if(Auth::user()->isAdmin())
+                                            <a href="{{ route('products.edit', $product) }}"
+                                                class="btn btn-secondary btn-sm mr-1">
+                                                Editar
+                                            </a>
+                                            <form action="{{ route('products.destroy', $product) }}" method="POST"
+                                                class="inline" onsubmit="return confirm('¿Eliminar este producto?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    Eliminar
+                                                </button>
+                                            </form>
+                                        @else
+                                            <span class="text-xs text-gray-400 italic">Solo lectura</span>
+                                        @endif
                                     </td>
                                 </tr>
                             @empty

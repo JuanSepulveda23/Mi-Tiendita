@@ -7,11 +7,13 @@ use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleItem;
 use Carbon\Carbon;
+use DomainException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Throwable;
 
 class SaleController extends Controller
 {
@@ -65,7 +67,7 @@ class SaleController extends Controller
         $products = Product::where('stock', '>', 0)
             ->where(function ($q) use ($query) {
                 $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('barcode', 'like', "%{$query}%");
+                    ->orWhere('barcode', 'like', "%{$query}%");
             })
             ->orderBy('name')
             ->take(20)
@@ -79,32 +81,39 @@ class SaleController extends Controller
      |──────────────────────────────────────── */
     public function store(StoreSaleRequest $request): RedirectResponse
     {
-        DB::transaction(function () use ($request) {
-            $sale = Sale::create(['total' => 0]);
-            $total = 0;
+        try {
+            DB::transaction(function () use ($request) {
+                $sale = Sale::create(['total' => 0]);
+                $total = 0;
 
-            foreach ($request->validated()['products'] as $item) {
-                $product = Product::findOrFail($item['id']);
+                foreach ($request->validated()['products'] as $item) {
+                    // Bloqueo pesimista para evitar sobreventas por concurrencia
+                    $product = Product::where('id', $item['id'])
+                        ->lockForUpdate()
+                        ->firstOrFail();
 
-                if ($product->stock < $item['quantity']) {
-                    abort(422, "Stock insuficiente para {$product->name}.");
+                    if ($product->stock < $item['quantity']) {
+                        throw new DomainException("Stock insuficiente para {$product->name}. Stock disponible: {$product->stock}.");
+                    }
+
+                    $subtotal = $product->sale_price * $item['quantity'];
+
+                    $sale->items()->create([
+                        'product_id' => $product->id,
+                        'quantity' => $item['quantity'],
+                        'price' => $product->sale_price,
+                    ]);
+
+                    $product->decrement('stock', $item['quantity']);
+
+                    $total += $subtotal;
                 }
 
-                $subtotal = $product->sale_price * $item['quantity'];
-
-                $sale->items()->create([
-                    'product_id' => $product->id,
-                    'quantity'   => $item['quantity'],
-                    'price'      => $product->sale_price,
-                ]);
-
-                $product->decrement('stock', $item['quantity']);
-
-                $total += $subtotal;
-            }
-
-            $sale->update(['total' => $total]);
-        });
+                $sale->update(['total' => $total]);
+            });
+        } catch (DomainException $e) {
+            return back()->withInput()->withErrors(['stock' => $e->getMessage()]);
+        }
 
         return redirect()
             ->route('sales.create')
@@ -117,45 +126,60 @@ class SaleController extends Controller
     public function storeQuick(Request $request): JsonResponse
     {
         $request->validate([
-            'items'              => ['required', 'array', 'min:1'],
+            'items' => ['required', 'array', 'min:1'],
             'items.*.product_id' => ['required', 'exists:products,id'],
-            'items.*.quantity'   => ['required', 'integer', 'min:1'],
+            'items.*.quantity' => ['required', 'integer', 'min:1'],
         ]);
 
-        $sale = null;
+        try {
+            $sale = DB::transaction(function () use ($request) {
+                $sale = Sale::create(['total' => 0]);
+                $total = 0;
 
-        DB::transaction(function () use ($request, &$sale) {
-            $sale = Sale::create(['total' => 0]);
-            $total = 0;
+                foreach ($request->input('items') as $item) {
+                    // Bloqueo pesimista para atomicidad en la validación y decremento de stock
+                    $product = Product::where('id', $item['product_id'])
+                        ->lockForUpdate()
+                        ->firstOrFail();
 
-            foreach ($request->input('items') as $item) {
-                $product = Product::findOrFail($item['product_id']);
+                    if ($product->stock < $item['quantity']) {
+                        throw new DomainException("Stock insuficiente para {$product->name}. Stock actual: {$product->stock}.");
+                    }
 
-                if ($product->stock < $item['quantity']) {
-                    abort(422, "Stock insuficiente para {$product->name}.");
+                    $subtotal = $product->sale_price * $item['quantity'];
+
+                    $sale->items()->create([
+                        'product_id' => $product->id,
+                        'quantity' => $item['quantity'],
+                        'price' => $product->sale_price,
+                    ]);
+
+                    $product->decrement('stock', $item['quantity']);
+                    $total += $subtotal;
                 }
 
-                $subtotal = $product->sale_price * $item['quantity'];
+                $sale->update(['total' => $total]);
 
-                $sale->items()->create([
-                    'product_id' => $product->id,
-                    'quantity'   => $item['quantity'],
-                    'price'      => $product->sale_price,
-                ]);
+                return $sale;
+            });
 
-                $product->decrement('stock', $item['quantity']);
-                $total += $subtotal;
-            }
-
-            $sale->update(['total' => $total]);
-        });
-
-        return response()->json([
-            'success'  => true,
-            'sale_id'  => $sale->id,
-            'total'    => $sale->total,
-            'message'  => '¡Venta registrada!',
-        ]);
+            return response()->json([
+                'success' => true,
+                'sale_id' => $sale->id,
+                'total' => $sale->total,
+                'message' => '¡Venta registrada!',
+            ]);
+        } catch (DomainException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
+        } catch (Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error inesperado al procesar la venta.',
+            ], 500);
+        }
     }
 
     /* ────────────────────────────────────────
@@ -170,14 +194,17 @@ class SaleController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
-        $totalToday        = $sales->sum('total');
-        $salesCountToday   = $sales->count();
+        $totalToday = $sales->sum('total');
+        $salesCountToday = $sales->count();
         $productsSoldToday = $sales->flatMap->items->sum('quantity');
 
-        $profitToday = SaleItem::whereHas('sale', fn ($q) => $q->whereDate('created_at', $today))
-            ->join('products', 'sale_items.product_id', '=', 'products.id')
-            ->selectRaw('SUM(sale_items.quantity * (sale_items.price - products.purchase_price)) as profit')
-            ->value('profit') ?? 0;
+        // Ganancia visible según permisos
+        $profitToday = request()->user()?->isAdmin()
+            ? (SaleItem::whereHas('sale', fn ($q) => $q->whereDate('created_at', $today))
+                ->join('products', 'sale_items.product_id', '=', 'products.id')
+                ->selectRaw('SUM(sale_items.quantity * (sale_items.price - products.purchase_price)) as profit')
+                ->value('profit') ?? 0)
+            : 0;
 
         return view('sales.today', compact(
             'sales',

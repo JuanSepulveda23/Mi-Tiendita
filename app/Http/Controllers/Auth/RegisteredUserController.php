@@ -32,19 +32,25 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'role' => ['required', 'string', 'in:admin,cashier'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'role' => $request->role,
             'password' => Hash::make($request->password),
         ]);
 
         event(new Registered($user));
 
-        Auth::login($user);
+        if (! Auth::check()) {
+            Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+            return redirect(route('dashboard', absolute: false));
+        }
+
+        return redirect()->route('register')->with('status', "Usuario {$user->name} ({$user->role}) creado exitosamente.");
     }
 }

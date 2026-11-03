@@ -61,10 +61,10 @@ class ProductController extends Controller
      |──────────────────────────────────────── */
     public function toggleFrequent(Product $product): JsonResponse
     {
-        $product->update(['is_frequent' => !$product->is_frequent]);
+        $product->update(['is_frequent' => ! $product->is_frequent]);
 
         return response()->json([
-            'success'     => true,
+            'success' => true,
             'is_frequent' => $product->is_frequent,
         ]);
     }
@@ -75,16 +75,16 @@ class ProductController extends Controller
     public function quickStore(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'name'       => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
             'sale_price' => ['required', 'numeric', 'min:0'],
-            'stock'      => ['required', 'integer', 'min:0'],
+            'stock' => ['required', 'integer', 'min:0'],
         ]);
 
         $product = Product::create([
-            'name'           => $validated['name'],
-            'sale_price'     => $validated['sale_price'],
+            'name' => $validated['name'],
+            'sale_price' => $validated['sale_price'],
             'purchase_price' => 0,
-            'stock'          => $validated['stock'],
+            'stock' => $validated['stock'],
         ]);
 
         return response()->json([

@@ -32,12 +32,13 @@ services:
     container_name: mi_tiendita_db
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: laravel
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_PASSWORD: root
-      MYSQL_USER: laravel
+      MYSQL_DATABASE: ${DB_DATABASE:-laravel}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_secure_tiendita}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-laravel_secure}
+      MYSQL_USER: ${DB_USERNAME:-laravel}
     ports:
-      - "3306:3306"
+      # Expuesto exclusivamente a localhost (127.0.0.1) para evitar acceso no autorizado en redes externas/LAN
+      - "127.0.0.1:${FORWARD_DB_PORT:-3306}:3306"
     networks:
       - mi-tiendita-network
     volumes:
