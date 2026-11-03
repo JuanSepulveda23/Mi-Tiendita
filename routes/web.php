@@ -16,6 +16,9 @@ Route::get('/', function () {
 // Offline page (accessible without auth for PWA)
 Route::get('/offline', fn () => view('offline'))->name('offline');
 
+// Política de tratamiento de datos personales y privacidad (Habeas Data / GDPR)
+Route::get('/privacy-policy', fn () => view('privacy'))->name('privacy.policy');
+
 Route::middleware(['auth'])->group(function () {
     // Dashboard general
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

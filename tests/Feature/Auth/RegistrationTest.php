@@ -45,6 +45,7 @@ class RegistrationTest extends TestCase
             'role' => User::ROLE_CASHIER,
             'password' => 'password123',
             'password_confirmation' => 'password123',
+            'terms' => '1',
         ]);
 
         $this->assertDatabaseHas('users', [
@@ -56,5 +57,24 @@ class RegistrationTest extends TestCase
         $this->assertAuthenticatedAs($admin);
         $response->assertRedirect(route('register'));
         $response->assertSessionHas('status');
+    }
+
+    public function test_registration_fails_if_terms_are_not_accepted(): void
+    {
+        $admin = User::factory()->admin()->create();
+
+        $response = $this->actingAs($admin)->post('/register', [
+            'name' => 'Empleado Sin Consentimiento',
+            'email' => 'sin.consentimiento@mitiendita.com',
+            'role' => User::ROLE_CASHIER,
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            // terms omitido
+        ]);
+
+        $response->assertSessionHasErrors(['terms']);
+        $this->assertDatabaseMissing('users', [
+            'email' => 'sin.consentimiento@mitiendita.com',
+        ]);
     }
 }
