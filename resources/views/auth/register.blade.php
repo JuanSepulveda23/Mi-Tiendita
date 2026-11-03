@@ -57,6 +57,18 @@
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
+        <!-- Términos y Política de Tratamiento de Datos Personales -->
+        <div class="mt-4">
+            <label for="terms" class="inline-flex items-start cursor-pointer">
+                <input id="terms" type="checkbox" name="terms" value="1" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 mt-1" required {{ old('terms') ? 'checked' : '' }}>
+                <span class="ms-2 text-xs text-gray-600 leading-normal">
+                    Declaro que el empleado consiente el tratamiento de sus datos personales conforme a la 
+                    <a href="{{ route('privacy.policy') }}" target="_blank" class="underline text-indigo-600 hover:text-indigo-800 font-medium">Política de Tratamiento de Datos Personales (Habeas Data / GDPR)</a>.
+                </span>
+            </label>
+            <x-input-error :messages="$errors->get('terms')" class="mt-2" />
+        </div>
+
         <div class="flex items-center justify-between mt-6">
             <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md" href="{{ route('dashboard') }}">
                 {{ __('← Volver al Dashboard') }}
