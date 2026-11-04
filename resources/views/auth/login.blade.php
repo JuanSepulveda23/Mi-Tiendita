@@ -167,11 +167,6 @@
                             <label for="password" class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
                                 Contraseña
                             </label>
-                            @if (Route::has('password.request'))
-                                <a href="{{ route('password.request') }}" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors">
-                                    ¿Olvidaste tu contraseña?
-                                </a>
-                            @endif
                         </div>
                         <div class="relative rounded-xl shadow-sm">
                             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -206,17 +201,25 @@
                         <x-input-error :messages="$errors->get('password')" class="mt-2" />
                     </div>
 
-                    {{-- Recordarme --}}
+                    {{-- Recordar contraseña y Recuperación --}}
                     <div class="flex items-center justify-between pt-1">
-                        <label for="remember_me" class="inline-flex items-center cursor-pointer select-none">
+                        <label for="remember_me" class="inline-flex items-center cursor-pointer select-none group">
                             <input
                                 id="remember_me"
                                 type="checkbox"
                                 name="remember"
-                                class="rounded-md border-slate-300 text-emerald-600 shadow-sm focus:ring-emerald-500 w-4 h-4"
+                                class="rounded-md border-slate-300 text-emerald-600 shadow-sm focus:ring-emerald-500 w-4 h-4 cursor-pointer"
                             />
-                            <span class="ms-2.5 text-xs font-medium text-slate-600">Mantener sesión iniciada</span>
+                            <span class="ms-2.5 text-xs font-medium text-slate-600 group-hover:text-slate-900 transition-colors">
+                                Recordar contraseña
+                            </span>
                         </label>
+
+                        @if (Route::has('password.request'))
+                            <a href="{{ route('password.request') }}" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors">
+                                ¿Olvidaste tu contraseña?
+                            </a>
+                        @endif
                     </div>
 
                     {{-- Botón de Acción Principal --}}

@@ -21,6 +21,9 @@ class AuthenticationTest extends TestCase
         $response->assertSee('Iniciar Sesión');
         $response->assertSee('name="email"', false);
         $response->assertSee('name="password"', false);
+        $response->assertSee('name="remember"', false);
+        $response->assertSee('Recordar contraseña');
+        $response->assertSee('¿Olvidaste tu contraseña?');
     }
 
     public function test_admin_user_can_authenticate_via_fortify(): void
