@@ -31,7 +31,7 @@
             Productos
         </x-sidebar-link>
 
-        @if(Auth::user()->isAdmin())
+        @if(Auth::user()?->isAdmin())
             <x-sidebar-link :href="route('intelligence.predictions')" :active="request()->routeIs('intelligence.*')"
                 icon="magic">
                 Predicciones
@@ -48,6 +48,7 @@
     </nav>
 
     {{-- ── User Footer ── --}}
+    @auth
     <div class="sidebar__footer">
         <div class="sidebar__user">
             <div class="sidebar__user-avatar">
@@ -83,6 +84,7 @@
             </form>
         </div>
     </div>
+    @endauth
 </aside>
 
 {{-- ── Mobile Overlay ── --}}
