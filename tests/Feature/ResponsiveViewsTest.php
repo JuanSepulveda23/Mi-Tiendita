@@ -12,6 +12,7 @@ class ResponsiveViewsTest extends TestCase
     use RefreshDatabase;
 
     protected User $admin;
+
     protected User $cashier;
 
     protected function setUp(): void
@@ -89,4 +90,3 @@ class ResponsiveViewsTest extends TestCase
         $response->assertSee('grid-cols-1 sm:grid-cols-2 lg:grid-cols-4', false);
     }
 }
-
