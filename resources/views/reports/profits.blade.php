@@ -5,14 +5,21 @@
                 💰 Reporte de Ganancias
             </h2>
         </div>
-        <div class="flex items-center gap-2">
-            <select id="days-filter" class="form-input text-sm w-auto" onchange="loadAllCharts()">
-                <option value="7">Últimos 7 días</option>
-                <option value="15">Últimos 15 días</option>
-                <option value="30" selected>Últimos 30 días</option>
-                <option value="60">Últimos 60 días</option>
-                <option value="90">Últimos 90 días</option>
+        <div class="relative inline-flex items-center">
+            <select id="days-filter"
+                class="btn bg-white/20 text-white hover:bg-white/30 border border-emerald-400 shadow-sm backdrop-blur-sm transition-all pl-4 pr-10 py-2 font-medium rounded-xl text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/40 appearance-none"
+                onchange="loadAllCharts()">
+                <option value="7" class="bg-slate-900 text-white">Últimos 7 días</option>
+                <option value="15" class="bg-slate-900 text-white">Últimos 15 días</option>
+                <option value="30" selected class="bg-slate-900 text-white">Últimos 30 días</option>
+                <option value="60" class="bg-slate-900 text-white">Últimos 60 días</option>
+                <option value="90" class="bg-slate-900 text-white">Últimos 90 días</option>
             </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-white/80">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </div>
         </div>
     </x-slot>
 
