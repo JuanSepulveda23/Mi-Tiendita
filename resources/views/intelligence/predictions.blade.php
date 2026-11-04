@@ -1,13 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <div>
+            <h2 class="font-bold text-2xl text-white leading-tight">
                 🔮 Predicción de Compras
             </h2>
-            <a href="{{ route('intelligence.orders') }}" class="btn btn-primary">
-                📋 Ver Pedido Sugerido
-            </a>
         </div>
+        <a href="{{ route('intelligence.orders') }}"
+            class="btn bg-white/20 text-white hover:bg-white/30 border border-emerald-400 shadow-sm backdrop-blur-sm transition-all px-4 py-2 font-medium">
+            📋 Ver Pedido Sugerido
+        </a>
     </x-slot>
 
     <div class="py-8">

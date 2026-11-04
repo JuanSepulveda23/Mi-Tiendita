@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Editar Producto: {{ $product->name }}
+        <h2 class="font-bold text-2xl text-white leading-tight">
+            📦 Editar Producto: {{ $product->name }}
         </h2>
     </x-slot>
 
