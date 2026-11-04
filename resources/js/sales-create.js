@@ -31,26 +31,26 @@ document.addEventListener('DOMContentLoaded', function () {
      */
     function addProductRow() {
         const row = document.createElement('div');
-        row.className = 'product-row grid grid-cols-12 gap-3 items-end mb-3 p-3 bg-gray-50 rounded-lg';
+        row.className = 'product-row grid grid-cols-12 gap-2.5 sm:gap-3 items-end mb-3 p-3 bg-gray-50 rounded-lg';
         row.dataset.index = rowIndex;
 
         row.innerHTML = `
-            <div class="col-span-6">
-                <label class="form-label">Producto</label>
-                <select name="products[${rowIndex}][id]" class="form-input product-select" required>
+            <div class="col-span-12 sm:col-span-5">
+                <label class="form-label text-xs sm:text-sm">Producto</label>
+                <select name="products[${rowIndex}][id]" class="form-input product-select text-xs sm:text-sm" required>
                     ${buildProductOptions()}
                 </select>
             </div>
-            <div class="col-span-2">
-                <label class="form-label">Cantidad</label>
-                <input type="number" name="products[${rowIndex}][quantity]" class="form-input quantity-input" value="1" min="1" required>
+            <div class="col-span-5 sm:col-span-2">
+                <label class="form-label text-xs sm:text-sm">Cantidad</label>
+                <input type="number" name="products[${rowIndex}][quantity]" class="form-input quantity-input text-xs sm:text-sm" value="1" min="1" required>
             </div>
-            <div class="col-span-3">
-                <label class="form-label">Subtotal</label>
-                <input type="text" class="form-input subtotal-display bg-gray-100" value="$0.00" readonly>
+            <div class="col-span-5 sm:col-span-3">
+                <label class="form-label text-xs sm:text-sm">Subtotal</label>
+                <input type="text" class="form-input subtotal-display bg-gray-100 text-xs sm:text-sm" value="$0.00" readonly>
             </div>
-            <div class="col-span-1 flex justify-center">
-                <button type="button" class="remove-row-btn btn btn-danger btn-sm" title="Eliminar">✕</button>
+            <div class="col-span-2 sm:col-span-2 flex justify-center pb-0.5">
+                <button type="button" class="remove-row-btn btn btn-danger btn-sm text-xs w-full sm:w-auto" title="Eliminar">✕</button>
             </div>
         `;
 

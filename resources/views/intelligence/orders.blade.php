@@ -1,21 +1,21 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
-            <h2 class="font-bold text-2xl text-white leading-tight">
+            <h2 class="font-bold text-xl sm:text-2xl text-white leading-tight">
                 📋 Pedido Sugerido
             </h2>
         </div>
         <a href="{{ route('intelligence.predictions') }}"
-            class="btn bg-white/20 text-white hover:bg-white/30 border border-emerald-400 shadow-sm backdrop-blur-sm transition-all px-4 py-2 font-medium">
+            class="btn bg-white/20 text-white hover:bg-white/30 border border-emerald-400 shadow-sm backdrop-blur-sm transition-all px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium">
             🔮 Ver Predicciones
         </a>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-4 sm:py-6 lg:py-8">
+        <div class="max-w-7xl mx-auto">
 
             {{-- Resumen del pedido --}}
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6">
                 <div class="metric-card border-l-4 border-l-blue-500">
                     <p class="metric-card__title">Productos a Pedir</p>
                     <p class="metric-card__value text-blue-600">{{ $orders->count() }}</p>
@@ -23,12 +23,12 @@
                 <div class="metric-card border-l-4 border-l-purple-500">
                     <p class="metric-card__title">Días de Análisis</p>
                     <p class="metric-card__value text-purple-600">{{ $days }}</p>
-                    <p class="text-sm text-gray-500 mt-1">rotación real + buffer</p>
+                    <p class="text-xs sm:text-sm text-gray-500 mt-1">rotación real + buffer</p>
                 </div>
                 <div class="metric-card border-l-4 border-l-green-500">
                     <p class="metric-card__title">Cantidad Total a Comprar</p>
                     <p class="metric-card__value text-green-600" id="kpi-total-order">{{ $totalToOrder }}</p>
-                    <p class="text-sm text-gray-500 mt-1">unidades</p>
+                    <p class="text-xs sm:text-sm text-gray-500 mt-1">unidades</p>
                 </div>
                 <div class="metric-card border-l-4 border-l-emerald-500">
                     <p class="metric-card__title">Inversión Estimada</p>
@@ -41,8 +41,8 @@
                 <div class="table-header">
                     <h3 class="table-header__title">Lista de Pedido (Análisis Últimos 7 Días)</h3>
                     <div class="flex items-center gap-3">
-                        <span class="text-sm text-gray-500">Rotación real + {{ $bufferDays }} días buffer</span>
-                        <button onclick="printOrder()" class="btn btn-secondary btn-sm">🖨️ Imprimir</button>
+                        <span class="text-xs sm:text-sm text-gray-500">Rotación real + {{ $bufferDays }} días buffer</span>
+                        <button onclick="printOrder()" class="btn btn-secondary btn-sm text-xs">🖨️ Imprimir</button>
                     </div>
                 </div>
 
@@ -50,61 +50,61 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Proveedor</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Ventas 7 Días</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Prom./Día</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Máx. Día</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Stock Actual</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Stock Objetivo</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider font-bold text-blue-600">Comprar</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Costo Est.</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Proveedor</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Ventas 7 Días</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Prom./Día</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Máx. Día</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Stock Actual</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Stock Objetivo</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider font-bold text-blue-600">Comprar</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Costo Est.</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse ($orders as $order)
                                 <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    <td class="px-3 sm:px-6 py-2.5 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900">
                                         {{ $order->product->name }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">
+                                    <td class="px-3 sm:px-6 py-2.5 sm:py-4 whitespace-nowrap text-center text-xs sm:text-sm text-gray-500">
                                         {{ $order->product->supplier ?? '—' }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-center text-xs text-gray-600 font-mono">
+                                    <td class="px-3 sm:px-6 py-2.5 sm:py-4 whitespace-nowrap text-center text-xs text-gray-600 font-mono">
                                         <div class="flex justify-center gap-1">
                                             @foreach($order->daily_sales as $sale)
-                                                <span class="inline-flex items-center justify-center w-6 h-6 rounded bg-blue-100 text-blue-800 text-xs font-semibold" title="Venta del día">
+                                                <span class="inline-flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 rounded bg-blue-100 text-blue-800 text-[10px] sm:text-xs font-semibold" title="Venta del día">
                                                     {{ $sale }}
                                                 </span>
                                             @endforeach
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-center">
-                                        <span class="text-sm font-bold text-green-600">{{ $order->avg_daily }} ud/día</span>
+                                    <td class="px-3 sm:px-6 py-2.5 sm:py-4 whitespace-nowrap text-center">
+                                        <span class="text-xs sm:text-sm font-bold text-green-600">{{ $order->avg_daily }} ud/día</span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-center">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                    <td class="px-3 sm:px-6 py-2.5 sm:py-4 whitespace-nowrap text-center">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] sm:text-xs font-medium bg-orange-100 text-orange-800">
                                             {{ $order->max_daily }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-center">
-                                        <span class="badge {{ $order->current_stock < $order->product->min_stock ? 'badge-danger' : 'badge-warning' }}">
+                                    <td class="px-3 sm:px-6 py-2.5 sm:py-4 whitespace-nowrap text-center">
+                                        <span class="badge {{ $order->current_stock < $order->product->min_stock ? 'badge-danger' : 'badge-warning' }} text-[11px] sm:text-xs">
                                             {{ $order->current_stock }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-semibold text-gray-700">
+                                    <td class="px-3 sm:px-6 py-2.5 sm:py-4 whitespace-nowrap text-center text-xs sm:text-sm font-semibold text-gray-700">
                                         {{ $order->target_stock }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-center">
-                                        <span class="text-lg font-bold text-blue-600">{{ $order->to_order }}</span>
+                                    <td class="px-3 sm:px-6 py-2.5 sm:py-4 whitespace-nowrap text-center">
+                                        <span class="text-base sm:text-lg font-bold text-blue-600">{{ $order->to_order }}</span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-semibold text-gray-900">
+                                    <td class="px-3 sm:px-6 py-2.5 sm:py-4 whitespace-nowrap text-right text-xs sm:text-sm font-semibold text-gray-900">
                                         ${{ number_format($order->estimated_cost, 0, ',', '.') }}
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="9" class="px-6 py-12 text-center text-gray-500">
+                                    <td colspan="9" class="px-4 sm:px-6 py-8 sm:py-12 text-center text-xs sm:text-sm text-gray-500">
                                         ¡No necesitas pedir nada! Tu stock cubre los próximos días basado en la rotación actual.
                                     </td>
                                 </tr>
@@ -113,9 +113,9 @@
                         @if($orders->count() > 0)
                             <tfoot class="bg-gray-50">
                                 <tr>
-                                    <td colspan="7" class="px-6 py-4 text-right text-sm font-bold text-gray-700">TOTAL PEDIDO:</td>
-                                    <td class="px-6 py-4 text-center text-lg font-bold text-blue-600">{{ $totalToOrder }}</td>
-                                    <td class="px-6 py-4 text-right text-lg font-bold text-gray-900">${{ number_format($totalCost, 0, ',', '.') }}</td>
+                                    <td colspan="7" class="px-3 sm:px-6 py-3 sm:py-4 text-right text-xs sm:text-sm font-bold text-gray-700">TOTAL PEDIDO:</td>
+                                    <td class="px-3 sm:px-6 py-3 sm:py-4 text-center text-base sm:text-lg font-bold text-blue-600">{{ $totalToOrder }}</td>
+                                    <td class="px-3 sm:px-6 py-3 sm:py-4 text-right text-base sm:text-lg font-bold text-gray-900">${{ number_format($totalCost, 0, ',', '.') }}</td>
                                 </tr>
                             </tfoot>
                         @endif

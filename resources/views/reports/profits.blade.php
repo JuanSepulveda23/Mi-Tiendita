@@ -1,13 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
-            <h2 class="font-bold text-2xl text-white leading-tight">
+            <h2 class="font-bold text-xl sm:text-2xl text-white leading-tight">
                 💰 Reporte de Ganancias
             </h2>
         </div>
         <div class="relative inline-flex items-center">
             <select id="days-filter"
-                class="btn bg-white/20 text-white hover:bg-white/30 border border-emerald-400 shadow-sm backdrop-blur-sm transition-all pl-4 pr-10 py-2 font-medium rounded-xl text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/40 appearance-none"
+                class="btn bg-white/20 text-white hover:bg-white/30 border border-emerald-400 shadow-sm backdrop-blur-sm transition-all pl-3 sm:pl-4 pr-8 sm:pr-10 py-1.5 sm:py-2 font-medium rounded-xl text-xs sm:text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/40 appearance-none"
                 onchange="loadAllCharts()">
                 <option value="7" class="bg-slate-900 text-white">Últimos 7 días</option>
                 <option value="15" class="bg-slate-900 text-white">Últimos 15 días</option>
@@ -15,7 +15,7 @@
                 <option value="60" class="bg-slate-900 text-white">Últimos 60 días</option>
                 <option value="90" class="bg-slate-900 text-white">Últimos 90 días</option>
             </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-white/80">
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 sm:pr-3 text-white/80">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
@@ -23,11 +23,11 @@
         </div>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-4 sm:py-6 lg:py-8">
+        <div class="max-w-7xl mx-auto">
 
             {{-- KPI Cards --}}
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6">
                 <div class="metric-card border-l-4 border-l-green-500">
                     <p class="metric-card__title">Ingresos Totales</p>
                     <p class="metric-card__value text-green-600" id="kpi-revenue">$0</p>
@@ -47,21 +47,21 @@
             </div>
 
             {{-- Gráfico de ganancias diarias --}}
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">📈 Ganancias Diarias</h3>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-4 sm:mb-6">
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">📈 Ganancias Diarias</h3>
                 <div id="chart-daily" style="height: 350px;"></div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
                 {{-- Gráfico de margen por producto --}}
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">📊 Ganancia por Producto</h3>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">📊 Ganancia por Producto</h3>
                     <div id="chart-products" style="height: 350px;"></div>
                 </div>
 
                 {{-- Gráfico de comparación precios --}}
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">💵 Precio Compra vs Venta</h3>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">💵 Precio Compra vs Venta</h3>
                     <div id="chart-prices" style="height: 350px;"></div>
                 </div>
             </div>
@@ -75,19 +75,19 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Producto</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Qty Vendida</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">P. Compra</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">P. Venta</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Ingreso</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Costo</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Ganancia</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Margen</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase">Producto</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-center text-xs font-medium text-gray-500 uppercase">Qty Vendida</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-right text-xs font-medium text-gray-500 uppercase">P. Compra</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-right text-xs font-medium text-gray-500 uppercase">P. Venta</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-right text-xs font-medium text-gray-500 uppercase">Ingreso</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-right text-xs font-medium text-gray-500 uppercase">Costo</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-right text-xs font-medium text-gray-500 uppercase">Ganancia</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-center text-xs font-medium text-gray-500 uppercase">Margen</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200" id="products-table-body">
                             <tr>
-                                <td colspan="8" class="px-6 py-8 text-center text-gray-500">Cargando datos...</td>
+                                <td colspan="8" class="px-4 sm:px-6 py-6 sm:py-8 text-center text-xs sm:text-sm text-gray-500">Cargando datos...</td>
                             </tr>
                         </tbody>
                     </table>

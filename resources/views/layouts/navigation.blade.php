@@ -1,7 +1,7 @@
 <aside x-data="{ open: false, mobileOpen: false }" class="sidebar" :class="{ 'sidebar--mobile-open': mobileOpen }">
 
     {{-- ── Logo ── --}}
-    <div class="sidebar__logo">
+    <div class="sidebar__logo flex items-center justify-between">
         <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
             <div class="sidebar__logo-icon">
                 <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-8 h-8">
@@ -15,6 +15,11 @@
                 <span class="sidebar__logo-sub">POS System</span>
             </div>
         </a>
+        <button type="button" class="md:hidden text-slate-400 hover:text-white p-1 rounded-lg focus:outline-none" onclick="closeMobileSidebar()" aria-label="Cerrar menú">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
     </div>
 
     {{-- ── Nav Links ── --}}

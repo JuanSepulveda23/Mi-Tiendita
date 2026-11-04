@@ -1,21 +1,21 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
-            <h2 class="font-bold text-2xl text-white leading-tight">
+            <h2 class="font-bold text-xl sm:text-2xl text-white leading-tight">
                 ⚠️ Alertas de Vencimiento
             </h2>
         </div>
         <a href="{{ route('dashboard') }}"
-            class="btn bg-white/20 text-white hover:bg-white/30 border border-emerald-400 shadow-sm backdrop-blur-sm transition-all px-4 py-2 font-medium">
+            class="btn bg-white/20 text-white hover:bg-white/30 border border-emerald-400 shadow-sm backdrop-blur-sm transition-all px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium">
             ← Volver al Dashboard
         </a>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-4 sm:py-6 lg:py-8">
+        <div class="max-w-7xl mx-auto">
 
             {{-- Estadísticas --}}
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 mb-4 sm:mb-6">
                 <div class="metric-card border-l-4 border-l-blue-500">
                     <p class="metric-card__title">Total Activas</p>
                     <p class="metric-card__value text-blue-600">{{ $stats['total'] }}</p>
@@ -38,44 +38,44 @@
             <div class="table-container">
                 <div class="table-header">
                     <h3 class="table-header__title">Productos Próximos a Vencer</h3>
-                    <span class="text-sm text-gray-500">{{ $stats['total'] }} alertas activas</span>
+                    <span class="text-xs sm:text-sm text-gray-500">{{ $stats['total'] }} alertas activas</span>
                 </div>
 
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Producto</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Vencimiento</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Días</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Stock</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Venta/Día</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Rotación</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Riesgo</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Acción</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase">Producto</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-center text-xs font-medium text-gray-500 uppercase">Vencimiento</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-center text-xs font-medium text-gray-500 uppercase">Días</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-center text-xs font-medium text-gray-500 uppercase">Stock</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-center text-xs font-medium text-gray-500 uppercase">Venta/Día</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-center text-xs font-medium text-gray-500 uppercase">Rotación</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-center text-xs font-medium text-gray-500 uppercase">Riesgo</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-center text-xs font-medium text-gray-500 uppercase">Acción</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse ($alerts as $alert)
                                 <tr class="hover:bg-gray-50 {{ $alert->risk_level === 'urgent' ? 'bg-red-50' : ($alert->risk_level === 'high' ? 'bg-orange-50' : '') }}">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    <td class="px-3 sm:px-6 py-2.5 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900">
                                         {{ $alert->product->name }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                    <td class="px-3 sm:px-6 py-2.5 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-600">
                                         {{ $alert->product->expiration_date->format('d/m/Y') }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-center">
-                                        <span class="text-lg font-bold {{ $alert->days_remaining <= 1 ? 'text-red-600' : ($alert->days_remaining <= 2 ? 'text-orange-600' : 'text-yellow-600') }}">
+                                    <td class="px-3 sm:px-6 py-2.5 sm:py-4 whitespace-nowrap text-center">
+                                        <span class="text-base sm:text-lg font-bold {{ $alert->days_remaining <= 1 ? 'text-red-600' : ($alert->days_remaining <= 2 ? 'text-orange-600' : 'text-yellow-600') }}">
                                             {{ max($alert->days_remaining, 0) }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-center">
-                                        <span class="badge badge-warning">{{ $alert->stock_at_alert }}</span>
+                                    <td class="px-3 sm:px-6 py-2.5 sm:py-4 whitespace-nowrap text-center">
+                                        <span class="badge badge-warning text-[11px] sm:text-xs">{{ $alert->stock_at_alert }}</span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
+                                    <td class="px-3 sm:px-6 py-2.5 sm:py-4 whitespace-nowrap text-center text-xs sm:text-sm">
                                         {{ $alert->avg_daily_sales ?? '-' }} ud/día
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-semibold">
+                                    <td class="px-3 sm:px-6 py-2.5 sm:py-4 whitespace-nowrap text-center text-xs sm:text-sm font-semibold">
                                         @if($alert->rotation_days !== null)
                                             <span class="{{ $alert->will_expire ? 'text-red-600' : 'text-green-600' }}">
                                                 {{ $alert->rotation_days }} días
@@ -84,21 +84,21 @@
                                             <span class="text-gray-400">—</span>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                                    <td class="px-3 sm:px-6 py-2.5 sm:py-4 whitespace-nowrap text-center">
                                         @if($alert->will_expire)
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-800">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold bg-red-100 text-red-800">
                                                 🚨 Pérdida
                                             </span>
                                         @else
-                                            <span class="badge {{ $alert->risk_level === 'urgent' ? 'badge-danger' : ($alert->risk_level === 'high' ? 'badge-warning' : 'badge-success') }}">
+                                            <span class="badge {{ $alert->risk_level === 'urgent' ? 'badge-danger' : ($alert->risk_level === 'high' ? 'badge-warning' : 'badge-success') }} text-[10px] sm:text-xs">
                                                 {{ $alert->risk_level === 'urgent' ? '🚨 Urgente' : ($alert->risk_level === 'high' ? '⚠️ Alto' : '🟡 Bajo') }}
                                             </span>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
+                                    <td class="px-3 sm:px-6 py-2.5 sm:py-4 whitespace-nowrap text-center text-xs sm:text-sm">
                                         <button 
                                             onclick="dismissAlert({{ $alert->id }})"
-                                            class="btn btn-secondary btn-sm"
+                                            class="btn btn-secondary btn-sm text-xs"
                                             title="Descartar esta alerta"
                                         >
                                             ✓ OK
@@ -107,7 +107,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="px-6 py-12 text-center text-gray-500">
+                                    <td colspan="8" class="px-4 sm:px-6 py-8 sm:py-12 text-center text-xs sm:text-sm text-gray-500">
                                         ✅ No hay alertas. ¡Todo está bien!
                                     </td>
                                 </tr>
@@ -117,7 +117,7 @@
                 </div>
 
                 @if ($alerts->hasPages())
-                    <div class="px-6 py-4 border-t border-gray-200">
+                    <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-200">
                         {{ $alerts->links() }}
                     </div>
                 @endif
