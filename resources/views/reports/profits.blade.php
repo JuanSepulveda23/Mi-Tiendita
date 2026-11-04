@@ -1,18 +1,18 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <div>
+            <h2 class="font-bold text-2xl text-white leading-tight">
                 💰 Reporte de Ganancias
             </h2>
-            <div class="flex items-center gap-2">
-                <select id="days-filter" class="form-input text-sm w-auto" onchange="loadAllCharts()">
-                    <option value="7">Últimos 7 días</option>
-                    <option value="15">Últimos 15 días</option>
-                    <option value="30" selected>Últimos 30 días</option>
-                    <option value="60">Últimos 60 días</option>
-                    <option value="90">Últimos 90 días</option>
-                </select>
-            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <select id="days-filter" class="form-input text-sm w-auto" onchange="loadAllCharts()">
+                <option value="7">Últimos 7 días</option>
+                <option value="15">Últimos 15 días</option>
+                <option value="30" selected>Últimos 30 días</option>
+                <option value="60">Últimos 60 días</option>
+                <option value="90">Últimos 90 días</option>
+            </select>
         </div>
     </x-slot>
 
