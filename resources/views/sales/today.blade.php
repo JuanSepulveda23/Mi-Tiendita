@@ -1,21 +1,21 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
-            <h2 class="font-bold text-2xl text-white leading-tight">
+            <h2 class="font-bold text-xl sm:text-2xl text-white leading-tight">
                 📋 Ventas de Hoy
             </h2>
         </div>
         <a href="{{ route('pos') }}"
-            class="btn bg-white/20 text-white hover:bg-white/30 border border-emerald-400 shadow-sm backdrop-blur-sm transition-all px-4 py-2 font-medium">
+            class="btn bg-white/20 text-white hover:bg-white/30 border border-emerald-400 shadow-sm backdrop-blur-sm transition-all px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium">
             🛒 Volver a Caja
         </a>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-4 sm:py-6 lg:py-8">
+        <div class="max-w-7xl mx-auto">
 
             {{-- KPI del día --}}
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8">
                 <div class="metric-card border-l-4 border-l-green-500">
                     <p class="metric-card__title">💰 Ventas Hoy</p>
                     <p class="metric-card__value text-green-600">${{ number_format($totalToday, 0, ',', '.') }}</p>
@@ -38,29 +38,29 @@
             <div class="table-container">
                 <div class="table-header">
                     <h3 class="table-header__title">Detalle de ventas — {{ now()->format('d/m/Y') }}</h3>
-                    <span class="text-sm text-gray-500">{{ $sales->count() }} ventas</span>
+                    <span class="text-xs sm:text-sm text-gray-500">{{ $sales->count() }} ventas</span>
                 </div>
 
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hora</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Productos</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hora</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Productos</th>
+                                <th class="px-3 sm:px-6 py-2.5 sm:py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse ($sales as $sale)
                                 <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <td class="px-3 sm:px-6 py-2.5 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500">
                                         {{ $sale->id }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <td class="px-3 sm:px-6 py-2.5 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500">
                                         {{ $sale->created_at->format('H:i') }}
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-gray-700">
+                                    <td class="px-3 sm:px-6 py-2.5 sm:py-4 text-xs sm:text-sm text-gray-700">
                                         <ul class="space-y-1">
                                             @foreach ($sale->items as $item)
                                                 <li class="flex items-center gap-2">
@@ -71,13 +71,13 @@
                                             @endforeach
                                         </ul>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 text-right">
+                                    <td class="px-3 sm:px-6 py-2.5 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-semibold text-gray-900 text-right">
                                         ${{ number_format($sale->total, 0, ',', '.') }}
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="px-6 py-12 text-center text-gray-500">
+                                    <td colspan="4" class="px-4 sm:px-6 py-8 sm:py-12 text-center text-xs sm:text-sm text-gray-500">
                                         No hay ventas hoy.
                                         <a href="{{ route('pos') }}" class="text-blue-600 hover:underline">¡Abre la caja!</a>
                                     </td>

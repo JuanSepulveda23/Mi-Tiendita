@@ -38,7 +38,7 @@
     }
 
     .app-page-header {
-        @apply px-10 py-6 flex items-center justify-between;
+        @apply px-4 sm:px-6 lg:px-10 py-3.5 sm:py-5 flex flex-wrap items-center justify-between gap-3;
         @apply sticky top-0 z-10 shadow-md;
         background: linear-gradient(135deg, #16a34a 0%, #047857 100%);
         border-bottom: 1px solid #065f46;
@@ -50,7 +50,19 @@
 
     .app-main {
         flex: 1;
-        padding: 2.5rem 3rem;
+        padding: 1rem 1rem 2rem 1rem;
+    }
+
+    @media (min-width: 640px) {
+        .app-main {
+            padding: 1.5rem 1.5rem 2.5rem 1.5rem;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .app-main {
+            padding: 2.5rem 3rem;
+        }
     }
 
     /* ─────── Offline banner ─────── */
@@ -238,12 +250,13 @@
     .sidebar-mobile-toggle {
         display: none;
         position: fixed;
-        top: 1rem;
-        left: 1rem;
+        top: 0.75rem;
+        left: 0.75rem;
         z-index: 50;
-        @apply w-10 h-10 rounded-xl items-center justify-center text-white shadow-lg;
-        background: #0f172a;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        @apply w-10 h-10 rounded-xl items-center justify-center text-white shadow-lg transition-all active:scale-95;
+        background: rgba(15, 23, 42, 0.9);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     /* ════════════════════════════════════════════════
@@ -266,8 +279,16 @@
             display: flex;
         }
 
+        /* Provide left clearance in page header for the hamburger button */
+        .app-page-header {
+            padding-left: 4.25rem !important;
+            padding-right: 1rem !important;
+            min-height: 4rem;
+        }
+
         .app-main {
-            padding-top: 4rem !important;
+            padding: 1rem !important;
+            padding-top: 1rem !important;
         }
     }
 
@@ -294,7 +315,7 @@
        METRIC CARDS
     ════════════════════════════════════════════════ */
     .metric-card {
-        @apply bg-white rounded-2xl border border-gray-100 p-8 transition-all duration-200;
+        @apply bg-white rounded-2xl border border-gray-100 p-4 sm:p-6 lg:p-7 transition-all duration-200;
         box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
     }
 
@@ -304,15 +325,15 @@
     }
 
     .metric-card__title {
-        @apply text-xs font-semibold uppercase tracking-widest text-gray-400;
+        @apply text-[11px] sm:text-xs font-semibold uppercase tracking-wider sm:tracking-widest text-gray-400;
     }
 
     .metric-card__value {
-        @apply text-3xl font-extrabold text-gray-900 mt-2;
+        @apply text-2xl sm:text-3xl font-extrabold text-gray-900 mt-1 sm:mt-2;
     }
 
     .metric-card__icon {
-        @apply w-11 h-11 rounded-xl flex items-center justify-center;
+        @apply w-9 h-9 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center shrink-0;
     }
 
     /* ════════════════════════════════════════════════
@@ -324,11 +345,15 @@
     }
 
     .table-header {
-        @apply px-8 py-6 border-b border-gray-100 flex items-center justify-between;
+        @apply px-4 sm:px-6 lg:px-8 py-3.5 sm:py-5 border-b border-gray-100 flex flex-wrap items-center justify-between gap-2;
     }
 
     .table-header__title {
-        @apply text-base font-bold text-gray-900;
+        @apply text-sm sm:text-base font-bold text-gray-900;
+    }
+
+    .overflow-x-auto {
+        -webkit-overflow-scrolling: touch;
     }
 
     /* ════════════════════════════════════════════════

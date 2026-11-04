@@ -263,19 +263,51 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .pos-main {
-                flex-direction: column;
+            .pos-container {
+                margin-left: 0;
             }
 
-            .pos-cart {
-                width: 100%;
-                height: 45vh;
-                border-left: none;
-                border-top: 2px solid #e5e7eb;
+            .pos-header {
+                padding-left: 4.25rem !important;
+                padding-right: 1rem !important;
+                padding-top: 0.75rem !important;
+                padding-bottom: 0.75rem !important;
+                min-height: 4rem !important;
+            }
+
+            .pos-main {
+                flex-direction: column;
+                position: relative;
+            }
+
+            .pos-pane-hidden-mobile {
+                display: none !important;
             }
 
             .pos-products {
-                height: 55vh;
+                height: auto;
+                flex: 1;
+                padding: 0.75rem;
+                padding-bottom: 5.5rem;
+            }
+
+            .pos-cart {
+                width: 100% !important;
+                height: auto;
+                flex: 1;
+                border-left: none;
+                border-top: none;
+            }
+
+            .pos-product-btn {
+                min-height: 80px;
+                padding: 0.75rem 0.5rem;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .pos-pane-hidden-mobile {
+                display: flex !important;
             }
         }
     </style>
@@ -288,15 +320,26 @@
         @include('layouts.navigation')
 
         {{-- ═══════════ HEADER POS (Airy spacing) ═══════════ --}}
-        <div class="bg-white border-b border-gray-100 px-8 py-5 flex items-center justify-between shadow-sm z-10" style="min-height: 5rem;">
+        <div class="pos-header bg-white border-b border-gray-100 px-4 sm:px-8 py-3 sm:py-5 flex items-center justify-between shadow-sm z-10 pl-16 sm:pl-8" style="min-height: 5rem;">
             <div class="flex items-center gap-3">
-                <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">🛒 Caja</h1>
+                <h1 class="text-lg sm:text-xl font-extrabold text-gray-900 tracking-tight">🛒 Caja</h1>
             </div>
-            <div class="flex items-center gap-4">
-                <span class="text-sm font-semibold text-gray-400 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 mr-2" id="pos-clock"></span>
-                <button onclick="openQuickProductModal()" class="btn btn-secondary btn-sm shadow-sm hover:shadow">+ Rápido</button>
-                <a href="{{ route('sales.today') }}" class="btn btn-primary btn-sm shadow-sm hover:shadow">📋 Ventas Hoy</a>
+            <div class="flex items-center gap-2 sm:gap-4">
+                <span class="hidden sm:inline-block text-sm font-semibold text-gray-400 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 mr-2" id="pos-clock"></span>
+                <button onclick="openQuickProductModal()" class="btn btn-secondary btn-sm text-xs sm:text-sm shadow-sm hover:shadow">+ Rápido</button>
+                <a href="{{ route('sales.today') }}" class="btn btn-primary btn-sm text-xs sm:text-sm shadow-sm hover:shadow">📋 Ventas Hoy</a>
             </div>
+        </div>
+
+        {{-- ═══════════ MOBILE TAB SWITCHER ═══════════ --}}
+        <div class="pos-mobile-tabs md:hidden flex border-b border-gray-200 bg-white sticky top-0 z-20 shadow-xs">
+            <button type="button" id="tab-btn-products" onclick="switchPosTab('products')" class="flex-1 py-3 text-center text-sm font-bold border-b-2 border-green-600 text-green-700 transition-colors">
+                📦 Productos
+            </button>
+            <button type="button" id="tab-btn-cart" onclick="switchPosTab('cart')" class="flex-1 py-3 text-center text-sm font-bold border-b-2 border-transparent text-gray-500 hover:text-gray-700 flex items-center justify-center gap-1.5 transition-colors">
+                <span>🛒 Carrito</span>
+                <span id="mobile-cart-badge" class="badge badge-success text-[11px] px-1.5 py-0.2 hidden">0</span>
+            </button>
         </div>
 
         {{-- ═══════════ MAIN ═══════════ --}}
@@ -358,7 +401,7 @@
             </div>
 
             {{-- ═══ PANEL DERECHO: Carrito ═══ --}}
-            <div class="pos-cart">
+            <div class="pos-cart pos-pane-hidden-mobile">
 
                 {{-- Header carrito --}}
                 <div class="px-4 py-3 bg-white border-b border-gray-200">
@@ -420,6 +463,17 @@
                     </button>
                 </div>
             </div>
+        </div>
+
+        {{-- Floating mobile bar when items in cart --}}
+        <div id="pos-mobile-cart-bar" class="md:hidden hidden fixed bottom-4 left-4 right-4 z-40 bg-gray-900/95 backdrop-blur-md text-white rounded-2xl p-3.5 shadow-2xl flex items-center justify-between cursor-pointer border border-gray-700 active:scale-98 transition-all" onclick="switchPosTab('cart')">
+            <div class="flex items-center gap-2.5">
+                <span class="w-7 h-7 rounded-full bg-green-500 text-white flex items-center justify-center text-xs font-bold" id="mobile-bar-qty">0</span>
+                <span class="text-sm font-semibold">Total: <span id="mobile-bar-total" class="font-bold text-green-400">$0</span></span>
+            </div>
+            <span class="text-xs font-bold uppercase tracking-wider text-green-400 flex items-center gap-1">
+                Ver Carrito / Cobrar →
+            </span>
         </div>
     </div>
 
@@ -564,6 +618,39 @@
             numpadClose();
         }
 
+        // ── Mobile POS Tab Switching ──
+        function switchPosTab(tab) {
+            const productsEl = document.querySelector('.pos-products');
+            const cartEl = document.querySelector('.pos-cart');
+            const btnProducts = document.getElementById('tab-btn-products');
+            const btnCart = document.getElementById('tab-btn-cart');
+            if (!productsEl || !cartEl) return;
+
+            if (tab === 'products') {
+                productsEl.classList.remove('pos-pane-hidden-mobile');
+                cartEl.classList.add('pos-pane-hidden-mobile');
+                if (btnProducts) {
+                    btnProducts.classList.add('border-green-600', 'text-green-700');
+                    btnProducts.classList.remove('border-transparent', 'text-gray-500');
+                }
+                if (btnCart) {
+                    btnCart.classList.remove('border-green-600', 'text-green-700');
+                    btnCart.classList.add('border-transparent', 'text-gray-500');
+                }
+            } else {
+                productsEl.classList.add('pos-pane-hidden-mobile');
+                cartEl.classList.remove('pos-pane-hidden-mobile');
+                if (btnCart) {
+                    btnCart.classList.add('border-green-600', 'text-green-700');
+                    btnCart.classList.remove('border-transparent', 'text-gray-500');
+                }
+                if (btnProducts) {
+                    btnProducts.classList.remove('border-green-600', 'text-green-700');
+                    btnProducts.classList.add('border-transparent', 'text-gray-500');
+                }
+            }
+        }
+
         // ── Render Cart ──
         function renderCart() {
             const container = document.getElementById('cart-items');
@@ -572,6 +659,8 @@
             const totalEl = document.getElementById('cart-total');
             const cobrarBtn = document.getElementById('cobrar-btn');
             const clearBtn = document.getElementById('clear-cart-btn');
+            const mobileBadge = document.getElementById('mobile-cart-badge');
+            const mobileBar = document.getElementById('pos-mobile-cart-bar');
 
             if (cart.length === 0) {
                 container.innerHTML = '';
@@ -580,6 +669,13 @@
                 totalEl.textContent = '$0';
                 cobrarBtn.disabled = true;
                 clearBtn.style.display = 'none';
+                if (mobileBadge) {
+                    mobileBadge.textContent = '0';
+                    mobileBadge.classList.add('hidden');
+                }
+                if (mobileBar) {
+                    mobileBar.classList.add('hidden');
+                }
                 return;
             }
 
@@ -607,9 +703,22 @@
             });
 
             container.innerHTML = html;
-            countEl.textContent = cart.reduce((sum, i) => sum + i.quantity, 0);
+            const totalQty = cart.reduce((sum, i) => sum + i.quantity, 0);
+            countEl.textContent = totalQty;
             totalEl.textContent = '$' + formatNumber(total);
             cobrarBtn.disabled = false;
+
+            if (mobileBadge) {
+                mobileBadge.textContent = totalQty;
+                mobileBadge.classList.remove('hidden');
+            }
+            if (mobileBar) {
+                mobileBar.classList.remove('hidden');
+                const barQty = document.getElementById('mobile-bar-qty');
+                const barTotal = document.getElementById('mobile-bar-total');
+                if (barQty) barQty.textContent = totalQty;
+                if (barTotal) barTotal.textContent = '$' + formatNumber(total);
+            }
         }
 
         function createEmptyMessage() {
@@ -797,6 +906,9 @@
 
         // ── Sale Success Overlay ──
         function showSaleSuccess(total, saleId) {
+            // Switch back to products tab on mobile so cashier is ready for next customer
+            switchPosTab('products');
+
             const overlay = document.createElement('div');
             overlay.className = 'sale-success-overlay';
             overlay.innerHTML = `
